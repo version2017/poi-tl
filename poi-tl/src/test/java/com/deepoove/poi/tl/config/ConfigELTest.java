@@ -1,25 +1,18 @@
 package com.deepoove.poi.tl.config;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import com.deepoove.poi.XWPFTemplate;
+import com.deepoove.poi.config.Configure;
+import com.deepoove.poi.data.*;
+import com.deepoove.poi.exception.ExpressionEvalException;
+import com.deepoove.poi.exception.RenderException;
+import com.deepoove.poi.tl.source.XWPFTestSupport;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.deepoove.poi.XWPFTemplate;
-import com.deepoove.poi.config.Configure;
-import com.deepoove.poi.data.HyperlinkTextRenderData;
-import com.deepoove.poi.data.PictureRenderData;
-import com.deepoove.poi.data.TableRenderData;
-import com.deepoove.poi.data.Tables;
-import com.deepoove.poi.data.TextRenderData;
-import com.deepoove.poi.exception.ExpressionEvalException;
-import com.deepoove.poi.exception.RenderException;
-import com.deepoove.poi.tl.source.XWPFTestSupport;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("ConfigEL test case")
 public class ConfigELTest {
@@ -59,6 +52,7 @@ public class ConfigELTest {
         model.getDetail().setDesc(null);
         // 当变量不存在时，会友好的认为变量是null，不会抛出异常
         XWPFTemplate template = XWPFTemplate.compile(resource).render(model);
+//		template.write(new FileOutputStream("C:\\Users\\roger.wu\\Desktop\\Test\\test.docx"));
         XWPFDocument document = XWPFTestSupport.readNewDocument(template);
         XWPFParagraph paragraph = document.getParagraphArray(0);
         assertEquals(paragraph.getText(), "Sayi");
