@@ -27,7 +27,7 @@ public class MyConfigureTest {
      * 
      * [[姓名]]
      */
-    String resource = "src/test/resources/template/my_config_test.docx";
+    String resource = "src/test/resources/template/mytest/my_config_test.docx";
     ConfigureBuilder builder;
 
     @BeforeEach
