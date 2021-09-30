@@ -50,6 +50,15 @@ public class DynamicColumnTableRenderPolicy extends DynamicTableRenderPolicy{
 
 		// 删除最后一行空白行
 		table.removeRow(table.getRows().size() - 2);
+		// 合并单元格
+		for (int i = 0; i < renderData.getStaticHeadRow(); i++) {
+			TableTools.mergeCellsHorizonal(table, i, renderData.getStaticHeadCol(),
+				renderData.getStaticHeadCol() + listedColNames.size() - 1);
+			table.getRow(i).getCell(renderData.getStaticHeadCol()).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+		}
+		table.getRow(table.getRows().size() - 1).getCell(1).setWidthType(TableWidthType.AUTO);
+		TableTools.mergeCellsHorizonal(table, table.getRows().size() - 1, 1, listedColNames.size());
+
 	}
 
 	private Set<String> getColNames(List<DynamicColumnTableRowData> tableData, Function<DynamicColumnTableRowData,
@@ -65,10 +74,13 @@ public class DynamicColumnTableRenderPolicy extends DynamicTableRenderPolicy{
 			return;
 		}
 		CollectionTools.reverseCollection(String.class, colNames);
-		XWPFTableRow header = table.getRow(0);
 
+		XWPFTableRow header = table.getRow(0);
 		int modelWidth = table.getRow(renderData.getStaticHeadRow()).getCell(renderData.getStaticHeadCol()).getWidth();
-		header.getCell(renderData.getStaticHeadCol()).setWidthType(TableWidthType.AUTO);
+		for (int i = 0; i < renderData.getStaticHeadRow(); i++) {
+			header = table.getRow(i);
+			header.getCell(renderData.getStaticHeadCol()).setWidthType(TableWidthType.AUTO);
+		}
 
 		// 清理模板内的数据：{{xxx}}
 		table.removeRow(renderData.getStaticHeadRow() + 1);
@@ -186,8 +198,14 @@ public class DynamicColumnTableRenderPolicy extends DynamicTableRenderPolicy{
 					colVal = renderData.valNameGetter.apply(data);
 				}
 			}
-			TableRenderPolicy.Helper.renderCell(row.createCell(), WordUtil.convert2Cell(colVal, null), null);
+			XWPFTableCell cell = row.createCell();
+			TableRenderPolicy.Helper.renderCell(cell, WordUtil.convert2Cell(colVal, null), null);
 		}
+	}
+
+	private int calColWidth(XWPFTable table, DynamicColumnTableRenderData renderData, List<String> colNames) {
+		XWPFTableCell cell = table.getRow(renderData.getStaticHeadRow() - 1).getCell(renderData.getStaticHeadCol());
+		return cell.getWidth() / colNames.size();
 	}
 
 }
